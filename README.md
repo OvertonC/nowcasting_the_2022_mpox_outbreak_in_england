@@ -20,7 +20,7 @@ The date the event occurred.
 ### dev (numeric variable)
 The delay between the event occurring and being reported. Note that a value of 1 represents occurring on the day of the event (so a delay between 0 and 1 days) and so on. 
 ### value (numeric variable)
-The number of events according to that origin and dev pair. These values have had 0.001 added as this helped numerical stability with lots of zeroes during early model development. This addition of 0.001 is redundant for the current models. 
+The number of events according to that origin and dev pair.
 ### dow_origin (factor variable)
 Day of week for the origin.
 ### dow_dev (factor variable)
