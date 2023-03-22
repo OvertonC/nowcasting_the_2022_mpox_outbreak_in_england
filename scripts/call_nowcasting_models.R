@@ -12,7 +12,7 @@ model <- "nonpara" # nonpara or para
 outcome <- "symptom" # symptom or specimen
 
 if (outcome == "symptom"){
-  model_run_range <- 105:160 # date range for symptom onset data
+  model_run_range <- 105:106 # date range for symptom onset data
 }
 if (outcome == "specimen"){
   model_run_range <- 75:160 # date range for specimen date data
@@ -30,21 +30,21 @@ for (d in model_run_range){
   max_date = d
   
   ## Nowcast data pre-processing__________________________________________________
-  lda <- read.csv(paste0("C:/Users/christopher.overton/OneDrive - UK Health Security Agency/Documents/Projects/Monkeypox/publication_data/data/data/nowcasting_input_",outcome,"_",d,".csv"))
-  date_list <- unique(lda$origin)
-  lda <- lda %>% mutate(origin = origin - min(lda$origin) + 1)
-  lda$dow_dev <- as.factor(lda$dow_dev)
-  lda$dow_origin <- as.factor(lda$dow_origin)
-  counts_observed <- read.csv(paste0("C:/Users/christopher.overton/OneDrive - UK Health Security Agency/Documents/Projects/Monkeypox/publication_data/data/data/full_data_",outcome,".csv"))
+  reporting_triangle <- read.csv(paste0("./publication_data/nowcasting_input_",outcome,"_",d,".csv"))
+  date_list <- unique(reporting_triangle$origin)
+  reporting_triangle <- reporting_triangle %>% mutate(origin = origin - min(reporting_triangle$origin) + 1)
+  reporting_triangle$dow_dev <- as.factor(reporting_triangle$dow_dev)
+  reporting_triangle$dow_origin <- as.factor(reporting_triangle$dow_origin)
+  counts_observed <- read.csv(paste0("./publication_data/full_data_",outcome,".csv"))
 
-  ldaFit <- subset(lda, !is.na(lda$value))
-  ldaOut <- subset(lda, is.na(lda$value))
-  ldaFit$value <- round(ldaFit$value)
+  reporting_triangle_fit <- subset(reporting_triangle, !is.na(reporting_triangle$value))
+  reporting_triangle_out <- subset(reporting_triangle, is.na(reporting_triangle$value))
+  reporting_triangle_fit$value <- round(reporting_triangle_fit$value)
 
   ###_____________________________________________________________________________
   
   ## Nowcast calculation__________________________________________________________
-  output <- try(nowcasting_mpox(max_date = max_date,ldaFit = ldaFit,ldaOut = ldaOut,lda = lda,n_samples = 10000,date_list = date_list,denom = denom,model = model,target = outcome))
+  output <- try(nowcasting_mpox(max_date = max_date,reporting_triangle_fit = reporting_triangle_fit,reporting_triangle_out = reporting_triangle_out,reporting_triangle = reporting_triangle,n_samples = 10000,date_list = date_list,denom = denom,model = model,target = outcome))
   counts <- try(output[[1]])
 
   ### Append earlier observations (before model fitting window) for fitting growth rates to the full time series
